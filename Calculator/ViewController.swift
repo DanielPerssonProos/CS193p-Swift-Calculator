@@ -19,14 +19,12 @@ class ViewController: UIViewController {
             brain.clearDescriptionOnOperation = true
         }
         
-        if userIsInTheMiddleOfTyping {
+        if userIsInTheMiddleOfTyping && display.text! != "0" {
             display.text = display.text! + sender.currentTitle!
         } else {
             display.text = sender.currentTitle!
         }
-        if sender.currentTitle! != "0" {
-            userIsInTheMiddleOfTyping = true
-        }
+        userIsInTheMiddleOfTyping = true
     }
     
     private var displayValue: Double {
@@ -87,7 +85,7 @@ class ViewController: UIViewController {
     
     @IBAction func variableOrConstantPressed(sender: UIButton) {
         brain.setOperand(sender.currentTitle!)
-        //brain.performOperation("=")
+        displayValue = brain.result
         userIsInTheMiddleOfTyping = false
     }
     
@@ -100,6 +98,7 @@ class ViewController: UIViewController {
     
     @IBAction func positiveNegativePressed() {
         displayValue *= -1
+        brain.setOperand(displayValue)
     }
 }
 

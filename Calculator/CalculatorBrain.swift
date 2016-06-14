@@ -83,32 +83,9 @@ class CalculatorBrain {
         case Equals
     }
     
-    var binaryOperationCalledLast = false
     func performOperation(symbol: String) {
-        /*if !internalProgram.isEmpty {
-            setDescription(symbol, displayText: String(internalProgram.last!))
-            
-        }
-        if let last = internalProgram.last {
-            if symbol == String(last) {
-                return
-            } else if operations.keys.contains(String(last)) {
-                switch operations[String(last)]! {
-                case .BinaryOperation(let function):
-                    pending = PendingBinaryOperationInfo(binaryFunction: function,firstOperand: pending!.firstOperand)
-                default: break
-                }
-            }
-        }*/
-        binaryOperationCalledLast = false
-        if !internalProgram.isEmpty && operations.keys.contains(String(internalProgram.last)) {
-            switch operations[String(internalProgram.last)]! {
-            case .BinaryOperation: binaryOperationCalledLast = true
-            default: break
-            }
-        }
-        
-        if binaryOperationCalledLast || internalProgram.isEmpty {
+        print("Last symbol in internal program: \(String(internalProgram.last!))")
+        if internalProgram.isEmpty || operations.keys.contains(String(internalProgram.last!)) {
             setDescription(symbol, displayText: String(accumulator))
         } else {
             setDescription(symbol, displayText: String(internalProgram.last!))
@@ -153,7 +130,7 @@ class CalculatorBrain {
     
     
     var clearDescriptionOnOperation = false
-    var isPartialResult = false
+    var isPartialResult = true
     private var plusOrMinusPerformedLast = false
     private var unaryOperationPerformedLast = false
     private var description = ""
@@ -175,8 +152,8 @@ class CalculatorBrain {
             }
             unaryOperationPerformedLast = true
             plusOrMinusPerformedLast = false
-        case "×", "÷", "+", "−":
             
+        case "×", "÷", "+", "−":
             var opString = " "+operation+" "
             let MultiplicationOrDivisionCalled = (operation == "×" || operation == "÷")
             
@@ -196,19 +173,22 @@ class CalculatorBrain {
             
             isPartialResult = true
             unaryOperationPerformedLast = false
+            
         case "x²":
-            if false {
+            if isPartialResult {
                 description = description+"("+formattedDisplayText+")²"
             } else {
                 description = "("+description+")²"
             }
             isPartialResult = false
             unaryOperationPerformedLast = true
+            
         case "=":
             if !unaryOperationPerformedLast {
                 description += formattedDisplayText
             }
             isPartialResult = false
+            
         default:
             break
         }
