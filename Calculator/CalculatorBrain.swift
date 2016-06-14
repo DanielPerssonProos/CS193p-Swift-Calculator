@@ -19,49 +19,6 @@ class CalculatorBrain {
     private var variableValues = [String: Double]()
     private var constants = [String: Double]()
     
-    
-    func setVariable(variable: String, value: Double) {
-        print("Setting \(variable) to \(value)")
-        variableValues[variable] = value
-        print("Value for \(variable) in variableValues: \(variableValues[variable])")
-        print("setVariable - M is set: \(variableValues.keys.contains(variable))")
-    }
-    
-    func setOperand(operand: Double) {
-        accumulator = operand
-        internalProgram.append(operand)
-    }
-    
-    func setOperand(variableName: String) {
-        if !isPartialResult {
-            displayCleared(false)
-        }
-        print("setOperand - M is set: \(variableValues.keys.contains(variableName))")
-        if variableValues.keys.contains(variableName) {
-            accumulator = variableValues[variableName]!
-        } else if constants.keys.contains(variableName) {
-            accumulator = constants[variableName]!
-        } else {
-            accumulator = 0.0
-        }
-        internalProgram.append(variableName)
-        print("setOperand: accumulator = \(accumulator)")
-    }
-    
-    func displayCleared(clearVariables: Bool = true) {
-        if clearVariables {
-            variableValues = [String: Double]()
-        }
-        internalProgram.removeAll()
-        pending = nil
-        description = ""
-        isPartialResult = true
-        unaryOperationPerformedLast = false
-        plusOrMinusPerformedLast = false
-        clearDescriptionOnOperation = false
-        accumulator = 0.0
-    }
-    
     private var operations: Dictionary<String,Operation> = [
         "±" : Operation.UnaryOperation({ -$0 }),
         "√" : Operation.UnaryOperation(sqrt),
@@ -84,7 +41,7 @@ class CalculatorBrain {
     }
     
     func performOperation(symbol: String) {
-        print("Last symbol in internal program: \(String(internalProgram.last!))")
+        print("peformOp accumulator = \(accumulator)!")
         if internalProgram.isEmpty || operations.keys.contains(String(internalProgram.last!)) {
             setDescription(symbol, displayText: String(accumulator))
         } else {
@@ -95,10 +52,10 @@ class CalculatorBrain {
         if let operation = operations[symbol] {
             switch operation {
             case .UnaryOperation(let function):
-                print("PerformOperation: accumulator = \(accumulator)")
                 accumulator = function(accumulator)
             case .BinaryOperation(let function):
                 executePendingBinaryOperation()
+                print("Binary first operand: \(accumulator)")
                 pending = PendingBinaryOperationInfo(binaryFunction: function, firstOperand: accumulator)
             case .Equals:
                 executePendingBinaryOperation()
@@ -128,6 +85,51 @@ class CalculatorBrain {
         }
     }
     
+    func setVariable(variable: String, value: Double) {
+        print("Setting \(variable) to \(value)")
+        variableValues[variable] = value
+        print("Value for \(variable) in variableValues: \(variableValues[variable])")
+        print("setVariable - M is set: \(variableValues.keys.contains(variable))")
+    }
+    
+    func setOperand(operand: Double) {
+        if !isPartialResult {
+            displayCleared(false)
+        }
+        accumulator = operand
+        internalProgram.append(operand)
+        print("setDoubOp accumulator = \(accumulator)!")
+    }
+    
+    func setOperand(variableName: String) {
+        if !isPartialResult {
+            displayCleared(false)
+        }
+        if variableValues.keys.contains(variableName) {
+            accumulator = variableValues[variableName]!
+        } else if constants.keys.contains(variableName) {
+            accumulator = constants[variableName]!
+        } else {
+            accumulator = 0.0
+        }
+        internalProgram.append(variableName)
+        print("setVarOp accumulator = \(accumulator)")
+    }
+    
+    func displayCleared(clearVariables: Bool = true) {
+        if clearVariables {
+            variableValues = [String: Double]()
+        }
+        internalProgram.removeAll()
+        pending = nil
+        description = ""
+        isPartialResult = true
+        unaryOperationPerformedLast = false
+        plusOrMinusPerformedLast = false
+        clearDescriptionOnOperation = false
+        accumulator = 0.0
+    }
+
     
     var clearDescriptionOnOperation = false
     var isPartialResult = true
@@ -136,22 +138,19 @@ class CalculatorBrain {
     private var description = ""
     
     private func setDescription(operation: String, displayText: String) {
-        if clearDescriptionOnOperation {
-            displayCleared(false)
-        }
-        print("Stuff added to description '\(formatNumber(displayText))'")
         let formattedDisplayText = formatNumber(displayText)
-        
+        print("Doing operation \(operation) on value \(accumulator)")
         switch operation {
         case "√", "cos", "sin", "tan", "ln":
             if isPartialResult {
-                print("Doing operation \(operation) on value \(formattedDisplayText)")
+                
                 description += operation+"("+formattedDisplayText+") "
             } else {
                 description = operation + "("+description+")"
             }
             unaryOperationPerformedLast = true
             plusOrMinusPerformedLast = false
+            isPartialResult = true
             
         case "×", "÷", "+", "−":
             var opString = " "+operation+" "
@@ -220,21 +219,29 @@ class CalculatorBrain {
     }
     
     func runProgram(programToRun: PropertyList, clearVariables: Bool = true) {
-        if clearVariables {
-            displayCleared(clearVariables)
-        }
-        if let arrayOfOps = programToRun as? [AnyObject] {
-            arrayOfOps.count
-            for op in arrayOfOps {
-                if let operand = op as? Double {
-                    setOperand(operand)
-                } else if let operation = op as? String {
-                    operations.keys.contains(operation) ? performOperation(operation) : setOperand(operation)
-                }
+        displayCleared(clearVariables)
+        internalProgram = programToRun as! [AnyObject]
+        for op in internalProgram {
+            var elemString = "Elem: \(op) "
+            if let operand = op as? Double {
+                setOperand(operand)
+                elemString += "is Double"
+            } else if let operation = op as? String {
+                operations.keys.contains(operation) ? performOperation(operation) : setOperand(operation)
+                elemString += "is String"
             }
+            print(elemString)
         }
+        
     }
     
+    func undoAction() {
+        if !internalProgram.isEmpty {
+            internalProgram.removeLast()
+            runProgram(internalProgram)
+        }
+        
+    }
     
     
 }

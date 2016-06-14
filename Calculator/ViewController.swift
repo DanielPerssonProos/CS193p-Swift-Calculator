@@ -90,15 +90,23 @@ class ViewController: UIViewController {
     }
     
     @IBAction func setM() {
-        print("SetM")
         brain.setVariable("M", value: displayValue)
         brain.runProgram(brain.program, clearVariables: false )
         displayValue = brain.result
+        descriptionDisplay.text = brain.getDescription()
     }
     
-    @IBAction func positiveNegativePressed() {
-        displayValue *= -1
-        brain.setOperand(displayValue)
+    @IBAction func undoPressed() {
+        if userIsInTheMiddleOfTyping {
+            if display.text!.characters.count > 1 {
+                display.text = String(display.text!.characters.dropLast())
+            } else {
+                display.text = "0"
+                userIsInTheMiddleOfTyping = false
+            }
+        } else {
+            brain.undoAction()
+        }
     }
 }
 
