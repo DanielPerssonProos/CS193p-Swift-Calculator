@@ -379,7 +379,7 @@
                                                             <action selector="doOperation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="d2J-Ib-jao"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ElG-Sg-ghI">
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ElG-Sg-ghI">
                                                         <rect key="frame" x="361" y="0.0" width="119" height="74"/>
                                                         <color key="backgroundColor" red="0.86910994760000004" green="0.43741760819999997" blue="0.1345779963" alpha="1" colorSpace="calibratedRGB"/>
                                                         <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="35"/>
@@ -390,7 +390,7 @@
                                                             <action selector="doOperation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="fol-Nu-STK"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rl0-G1-nvs">
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rl0-G1-nvs">
                                                         <rect key="frame" x="481" y="0.0" width="119" height="74"/>
                                                         <color key="backgroundColor" red="0.86910994760000004" green="0.43741760820301934" blue="0.13457799634924592" alpha="1" colorSpace="calibratedRGB"/>
                                                         <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="30"/>

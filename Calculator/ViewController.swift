@@ -15,10 +15,6 @@ class ViewController: UIViewController {
     private var doingDecimal = false
     
     @IBAction private func digitPress(sender: UIButton) {
-        if !brain.isPartialResult {
-            brain.clearDescriptionOnOperation = true
-        }
-        
         if userIsInTheMiddleOfTyping && display.text! != "0" {
             display.text = display.text! + sender.currentTitle!
         } else {
@@ -32,7 +28,10 @@ class ViewController: UIViewController {
             return Double(display.text!)!
         }
         set {
-            if newValue % 1.0 == 0.0 {
+            if newValue.isNaN {
+                brain.displayCleared(false)
+                display.text = "Error"
+            } else if newValue % 1.0 == 0.0 {
                 var newValueArray = String(newValue).componentsSeparatedByString(".")
                 display.text = newValueArray[0]
             } else {
@@ -44,6 +43,7 @@ class ViewController: UIViewController {
     private var brain = CalculatorBrain()
     @IBAction private func doOperation(sender: UIButton) {
         if userIsInTheMiddleOfTyping {
+            print("User is in the middle of typing")
             brain.setOperand(displayValue)
             userIsInTheMiddleOfTyping = false
         }
@@ -52,6 +52,7 @@ class ViewController: UIViewController {
         }
         displayValue = brain.result
         descriptionDisplay.text = brain.getDescription()
+        print("Display text: \(descriptionDisplay.text!)")
     }
     
     @IBAction func doDecimal(sender: UIButton) {
@@ -76,10 +77,12 @@ class ViewController: UIViewController {
     }
     
     @IBAction func load() {
+        print("---------------------LOAD CALLED------------------------")
         if savedProgram != nil {
             brain.program = savedProgram!
             brain.runProgram(savedProgram!)
             displayValue = brain.result
+            descriptionDisplay.text = brain.getDescription()
         }
     }
     
@@ -90,6 +93,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func setM() {
+        userIsInTheMiddleOfTyping = false
         brain.setVariable("M", value: displayValue)
         brain.runProgram(brain.program, clearVariables: false )
         displayValue = brain.result
@@ -106,6 +110,8 @@ class ViewController: UIViewController {
             }
         } else {
             brain.undoAction()
+            displayValue = brain.result
+            descriptionDisplay.text = brain.getDescription()
         }
     }
 }
