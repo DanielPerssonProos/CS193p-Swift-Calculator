@@ -43,7 +43,6 @@ class ViewController: UIViewController {
     private var brain = CalculatorBrain()
     @IBAction private func doOperation(sender: UIButton) {
         if userIsInTheMiddleOfTyping {
-            print("User is in the middle of typing")
             brain.setOperand(displayValue)
             userIsInTheMiddleOfTyping = false
         }
@@ -52,7 +51,6 @@ class ViewController: UIViewController {
         }
         displayValue = brain.result
         descriptionDisplay.text = brain.getDescription()
-        print("Display text: \(descriptionDisplay.text!)")
     }
     
     @IBAction func doDecimal(sender: UIButton) {
@@ -77,7 +75,6 @@ class ViewController: UIViewController {
     }
     
     @IBAction func load() {
-        print("---------------------LOAD CALLED------------------------")
         if savedProgram != nil {
             brain.program = savedProgram!
             brain.runProgram(savedProgram!)

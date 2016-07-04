@@ -58,7 +58,6 @@ class CalculatorBrain {
                 isPartialResult = true
                 unaryOperationPerformedLast = false
                 executePendingBinaryOperation()
-                //print("Binary first operand: \(accumulator)")
                 pending = PendingBinaryOperationInfo(binaryFunction: function, firstOperand: accumulator)
             case .Equals:
                 isPartialResult = false
@@ -69,9 +68,7 @@ class CalculatorBrain {
     
     private func executePendingBinaryOperation() {
         if pending != nil {
-            print("Performing operation on \(pending!.firstOperand) and \(accumulator)")
             accumulator = pending!.binaryFunction(pending!.firstOperand, accumulator)
-            print("Accumulator set to \(accumulator)")
             pending = nil
         }
     }
@@ -90,10 +87,7 @@ class CalculatorBrain {
     }
     
     func setVariable(variable: String, value: Double) {
-        print("Setting \(variable) to \(value)")
         variableValues[variable] = value
-        print("Value for \(variable) in variableValues: \(variableValues[variable])")
-        print("setVariable - M is set: \(variableValues.keys.contains(variable))")
     }
     
     func setOperand(operand: Double) {
@@ -102,7 +96,6 @@ class CalculatorBrain {
         }
         accumulator = operand
         internalProgram.append(operand)
-        //print("setDoubOp accumulator = \(accumulator)!")
     }
     
     func setOperand(variableName: String) {
@@ -117,11 +110,9 @@ class CalculatorBrain {
             accumulator = 0.0
         }
         internalProgram.append(variableName)
-        print("setVarOp accumulator = \(accumulator)")
     }
     
     func displayCleared(clearVariables: Bool = true) {
-        print("Display cleared. Clear variables: \(clearVariables)")
         if clearVariables {
             variableValues = [String: Double]()
         }
@@ -131,12 +122,9 @@ class CalculatorBrain {
         isPartialResult = true
         unaryOperationPerformedLast = false
         plusOrMinusPerformedLast = false
-        //clearDescriptionOnOperation = false
         accumulator = 0.0
     }
-
     
-    //var clearDescriptionOnOperation = false
     var isPartialResult = true
     private var plusOrMinusPerformedLast = false
     private var unaryOperationPerformedLast = false
@@ -145,7 +133,7 @@ class CalculatorBrain {
     private func setDescription(operation: String, displayText: String) {
         var usedDescription = description == " " ? "" : description
         let formattedDisplayText = formatNumber(displayText)
-        print("Doing operation \(operation) on value \(accumulator)")
+        
         switch operation {
         case "√", "cos", "sin", "tan", "ln", "x²":
             let preString = operation == "x²" ? "(" : operation+"("
@@ -186,6 +174,7 @@ class CalculatorBrain {
         }
         description = usedDescription
     }
+    
     func getDescription() -> String {
         if description != " " {
             if isPartialResult {
@@ -197,6 +186,7 @@ class CalculatorBrain {
             return description
         }
     }
+    
     private func formatNumber(number: String) -> String {
         if Double(number) != nil && Double(number)! % 1.0 == 0.0 {
             return number.componentsSeparatedByString(".")[0]
@@ -218,31 +208,23 @@ class CalculatorBrain {
     func runProgram(programToRun: PropertyList, clearVariables: Bool = true) {
         displayCleared(clearVariables)
         let program = programToRun as! [AnyObject]
-        print("Values left in internal program: \(internalProgram.count)")
         for op in program {
-            var elemString = "Elem: \(op) "
             if let operand = op as? Double {
                 setOperand(operand)
-                elemString += "is Double"
             } else if let operation = op as? String {
                 operations.keys.contains(operation) ? performOperation(operation) : setOperand(operation)
-                elemString += "is String"
             }
-            print(elemString)
         }
         
     }
     
     func undoAction() {
-        //print("Values left in internal program: \(internalProgram.count)")
         if internalProgram.count > 1 {
             internalProgram.removeLast()
             runProgram(internalProgram)
         } else {
             displayCleared(false)
         }
-        
     }
-    
     
 }
